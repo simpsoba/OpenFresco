@@ -104,7 +104,7 @@ Domain::Domain()
  theBounds(6), theEigenvalues(0), theEigenvalueSetTime(0), 
  theModalProperties(0),
  theModalDampingFactors(0), inclModalMatrix(false),
- lastChannel(0),
+ lastChannel(0), needsBarrierCheckFlag(false), barrierCheckFn(0),
  paramIndex(0), paramSize(0), numParameters(0)
 {
   
@@ -162,7 +162,7 @@ Domain::Domain(int numNodes, int numElements, int numSPs, int numMPs, int numEQs
  theBounds(6), theEigenvalues(0), theEigenvalueSetTime(0), 
  theModalProperties(0),
  theModalDampingFactors(0), inclModalMatrix(false),
- lastChannel(0), paramIndex(0), paramSize(0), numParameters(0)
+ lastChannel(0), needsBarrierCheckFlag(false), barrierCheckFn(0), paramIndex(0), paramSize(0), numParameters(0)
 {
     // init the arrays for storing the domain components
     theElements = new MapOfTaggedObjects();
@@ -227,7 +227,7 @@ Domain::Domain(TaggedObjectStorage &theNodesStorage,
  theBounds(6), theEigenvalues(0), theEigenvalueSetTime(0), 
  theModalProperties(0),
  theModalDampingFactors(0), inclModalMatrix(false),
- lastChannel(0),paramIndex(0), paramSize(0), numParameters(0)
+ lastChannel(0), needsBarrierCheckFlag(false), barrierCheckFn(0), paramIndex(0), paramSize(0), numParameters(0)
 {
     // init the arrays for storing the domain components
     thePCs      = new MapOfTaggedObjects();
@@ -288,7 +288,7 @@ Domain::Domain(TaggedObjectStorage &theStorage)
  theBounds(6), theEigenvalues(0), theEigenvalueSetTime(0), 
  theModalProperties(0),
  theModalDampingFactors(0), inclModalMatrix(false),
- lastChannel(0),paramIndex(0), paramSize(0), numParameters(0)
+ lastChannel(0), needsBarrierCheckFlag(false), barrierCheckFn(0), paramIndex(0), paramSize(0), numParameters(0)
 {
     // init the arrays for storing the domain components
     theStorage.clearAll(); // clear the storage just in case populated
@@ -1105,6 +1105,7 @@ Domain::clearAll(void) {
   currentGeoTag = 0;
   lastGeoSendTag = -1;
   lastChannel = 0;
+  needsBarrierCheckFlag = false;
 
   // rest the flag to be as initial
   hasDomainChangedFlag = false;
@@ -2270,6 +2271,33 @@ Domain::update(void)
   return ok;
 }
 
+
+
+void
+Domain::setBarrierCheck(bool flag)
+{
+  needsBarrierCheckFlag = flag;
+}
+
+void
+Domain::setBarrierCheckFn(BarrierCheckFn fn)
+{
+  barrierCheckFn = fn;
+}
+
+bool
+Domain::needsBarrierCheck(void) const
+{
+  return needsBarrierCheckFlag;
+}
+
+int
+Domain::barrierCheck(int localResult)
+{
+  if (barrierCheckFn != 0)
+    return (*barrierCheckFn)(this, localResult);
+  return localResult;
+}
 
 int
 Domain::update(double newTime, double dT)
