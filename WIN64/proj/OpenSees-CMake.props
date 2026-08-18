@@ -9,7 +9,7 @@
     or set the same MSBuild properties in Visual Studio before building.
   -->
   <PropertyGroup Label="UserMacros">
-    <OpenSeesRoot Condition="'$(OpenSeesRoot)' == ''">$(MSBuildThisFileDirectory)..\..\..\OpenSees-RTHS-CUDA</OpenSeesRoot>
+    <OpenSeesRoot Condition="'$(OpenSeesRoot)' == ''">$(MSBuildThisFileDirectory)..\..\..\OpenSees</OpenSeesRoot>
     <OpenSeesBuildRoot Condition="'$(OpenSeesBuildRoot)' == ''">$(OpenSeesRoot)\build</OpenSeesBuildRoot>
     <OpenSeesLibDir Condition="'$(OpenSeesLibDir)' == ''">$(OpenSeesBuildRoot)\lib</OpenSeesLibDir>
     <OpenSeesBinDir Condition="'$(OpenSeesBinDir)' == ''">$(OpenSeesBuildRoot)\bin-fresco</OpenSeesBinDir>
